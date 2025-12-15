@@ -1,409 +1,364 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Armas leves</title>
-
-  <!-- Ícones (Font Awesome) -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Calculadora de Crafts</title>
 
   <style>
     :root{
-      --card-bg: rgba(10, 14, 22, 0.45);
-      --card-border: rgba(255,255,255,0.14);
-      --text: rgba(255,255,255,0.92);
-      --muted: rgba(255,255,255,0.72);
-      --shadow: 0 18px 40px rgba(0,0,0,0.35);
-      --radius: 18px;
-      --accent: rgba(255,255,255,0.18);
-      --accent2: rgba(255,255,255,0.10);
+      --white: rgba(255,255,255,0.95);
+      --glass: rgba(255,255,255,0.14);
+      --border: rgba(255,255,255,0.25);
+      --shadow: rgba(0,0,0,0.35);
     }
 
-    *{ box-sizing: border-box; }
-    body{
-      margin: 0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      color: var(--text);
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
       min-height: 100vh;
+      margin: 0;
+      color: #ffffff;
 
-      /* fundo (mete fundo.jpg na mesma pasta) */
-      background-image: url("fundo.jpg");
+      background:
+        linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)),
+        url("fundo.jpg") no-repeat center center fixed;
       background-size: cover;
-      background-position: center;
-      background-attachment: fixed;
-    }
-    body::before{
-      content:"";
-      position: fixed;
-      inset: 0;
-      background: radial-gradient(1200px 600px at 20% 10%, rgba(0,0,0,.12), rgba(0,0,0,.70));
-      pointer-events: none;
-      z-index: 0;
     }
 
-    .wrap{
-      position: relative;
-      z-index: 1;
-      max-width: 1150px;
-      margin: 26px auto;
-      padding: 0 16px 26px;
+    .container {
+      max-width: 520px;
+      margin: 60px auto;
+      padding: 26px;
+      border-radius: 20px;
+
+      background: var(--glass);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 35px var(--shadow);
     }
 
-    header{
-      display:flex;
-      align-items:flex-end;
-      justify-content: space-between;
-      gap: 16px;
-      margin-bottom: 14px;
+    h1 {
+      text-align: center;
+      margin: 0 0 8px;
+      font-weight: 900;
+      letter-spacing: 1px;
     }
-    h1{ margin:0; font-size: 34px; letter-spacing: .3px; display:flex; gap:10px; align-items:center; }
-    .muted{ color: var(--muted); font-size: 14px; margin-top: 6px; }
+
+    .subtitle{
+      text-align:center;
+      font-size: 12px;
+      opacity: 0.8;
+      margin-bottom: 18px;
+    }
 
     .grid{
       display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-      margin-top: 14px;
+      gap: 12px;
     }
 
-    .card{
-      border-radius: var(--radius);
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      box-shadow: var(--shadow);
-      padding: 16px;
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      animation: pop .25s ease both;
+    label {
+      display: block;
+      margin-top: 2px;
+      font-size: 14px;
+      opacity: 0.95;
     }
-    @keyframes pop { from { transform: translateY(6px); opacity: .0; } to { transform: translateY(0); opacity: 1; } }
 
-    .card h2{
-      margin: 0 0 10px;
-      font-size: 18px;
-      color: rgba(255,255,255,0.95);
-      display:flex;
-      align-items:center;
-      gap:10px;
+    input {
+      width: 100%;
+      padding: 12px;
+      margin-top: 6px;
+      border-radius: 12px;
+      border: 1px solid rgba(0,0,0,0.08);
+      outline: none;
+      font-size: 16px;
+
+      background: var(--white);
+      color: #000;
+      box-sizing: border-box;
+    }
+
+    input:focus{
+      box-shadow: 0 0 0 3px rgba(255,255,255,0.18);
+    }
+
+    hr {
+      margin: 18px 0;
+      border: none;
+      height: 1px;
+      background: rgba(255, 255, 255, 0.35);
+    }
+
+    .result {
+      display: grid;
+      gap: 10px;
+      margin-top: 10px;
+      font-size: 15px;
     }
 
     .row{
       display:flex;
-      gap: 12px;
       align-items:center;
-      flex-wrap: wrap;
-    }
-
-    label{
-      display:flex;
       justify-content: space-between;
-      align-items:center;
-      gap: 12px;
-      margin: 10px 0;
-    }
-
-    input[type="number"], select{
-      width: 200px;
-      padding: 10px 12px;
-      border-radius: 12px;
+      padding: 12px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.10);
       border: 1px solid rgba(255,255,255,0.18);
-      background: rgba(0,0,0,0.22);
-      color: var(--text);
-      outline: none;
-    }
-    input[type="number"]:focus, select:focus{
-      border-color: rgba(255,255,255,0.35);
+      font-weight: 650;
     }
 
-    .actions{
+    .row .left{
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      opacity: 0.95;
+    }
+
+    .row .value{
+      font-weight: 800;
+      letter-spacing: 0.3px;
+    }
+
+    .logo {
+      text-align: center;
+      margin-top: 18px;
+      font-size: 28px;
+      font-weight: 900;
+      letter-spacing: 4px;
+      opacity: 0.9;
+      text-transform: uppercase;
+    }
+
+    .btns{
       display:flex;
       gap: 10px;
-      flex-wrap: wrap;
-      margin-top: 10px;
+      margin-top: 12px;
     }
-
     button{
-      padding: 10px 12px;
+      flex:1;
+      padding: 12px;
       border-radius: 12px;
-      border: 1px solid rgba(255,255,255,0.18);
-      background: rgba(255,255,255,0.08);
-      color: var(--text);
-      cursor: pointer;
-      transition: transform .08s ease, background .15s ease;
-      display:flex;
-      align-items:center;
-      gap: 10px;
+      border: 1px solid rgba(255,255,255,0.22);
+      background: rgba(255,255,255,0.14);
+      color: #fff;
+      font-weight: 800;
+      cursor:pointer;
     }
-    button:hover{ background: rgba(255,255,255,0.14); }
-    button:active{ transform: scale(0.98); }
-
-    table{
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-      overflow: hidden;
-      border-radius: 14px;
-    }
-    th, td{
-      text-align: left;
-      padding: 10px 10px;
-      border-bottom: 1px solid rgba(255,255,255,0.10);
-      font-size: 14px;
-    }
-    th{
-      color: rgba(255,255,255,0.85);
-      font-weight: 600;
-      background: rgba(255,255,255,0.06);
+    button:hover{
+      background: rgba(255,255,255,0.20);
     }
 
-    .pill{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding: 8px 10px;
-      border-radius: 999px;
-      border: 1px solid var(--accent);
-      background: rgba(255,255,255,0.06);
-      color: rgba(255,255,255,0.9);
-      font-size: 13px;
-    }
-
-    .hint{
-      margin-top: 10px;
-      padding: 10px 12px;
-      border-radius: 14px;
-      border: 1px solid var(--accent2);
-      background: rgba(0,0,0,0.18);
-      color: rgba(255,255,255,0.75);
-      font-size: 13px;
-      display:flex;
-      align-items:flex-start;
-      gap:10px;
-    }
-
-    @media (max-width: 900px){
-      .grid{ grid-template-columns: 1fr; }
-      h1{ font-size: 28px; }
-      input[type="number"], select{ width: 100%; }
+    @media (max-width: 560px){
+      .container{ margin: 30px 12px; }
+      .logo{ font-size: 24px; }
     }
   </style>
 </head>
 
 <body>
-  <div class="wrap">
-    <header>
-      <div>
-        <h1><i class="fa-solid fa-gun"></i> Armas leves</h1>
-        <div class="muted">Escolhe uma arma no menu, mete a quantidade e soma os materiais automaticamente.</div>
-      </div>
-
-      <div class="pill" id="countPill">
-        <i class="fa-solid fa-calculator"></i>
-        <span>0 itens</span>
-      </div>
-    </header>
+  <div class="container">
+    <h1>Calculadora de Crafts</h1>
+    <div class="subtitle">Micro UZI • TEC-9 • PDW • Mini AK</div>
 
     <div class="grid">
-      <div class="card">
-        <h2><i class="fa-solid fa-list-check"></i> Seleção</h2>
-
-        <div class="row">
-          <label style="flex:1; margin:0;">
-            Arma
-            <select id="weaponSelect"></select>
-          </label>
-
-          <label style="flex:1; margin:0;">
-            Quantidade
-            <input id="weaponQty" type="number" min="0" value="1" />
-          </label>
-        </div>
-
-        <div class="actions">
-          <button id="btnAdd" type="button"><i class="fa-solid fa-plus"></i> Adicionar</button>
-          <button id="btnClear" type="button"><i class="fa-solid fa-broom"></i> Limpar tudo</button>
-        </div>
-
-        <div class="hint">
-          <i class="fa-solid fa-circle-info" style="margin-top:2px;"></i>
-          <div>
-            <div><b>Dica:</b> podes adicionar várias armas diferentes e ele soma tudo.</div>
-            <div>Se quiseres, eu meto também “remover 1 item” por arma.</div>
-          </div>
-        </div>
-
-        <h2 style="margin-top:14px;"><i class="fa-solid fa-box-open"></i> Carrinho</h2>
-        <table>
-          <thead>
-            <tr><th>Arma</th><th>Qtd</th></tr>
-          </thead>
-          <tbody id="cartBody"></tbody>
-        </table>
+      <div>
+        <label>Micro UZI (quantidade de crafts)</label>
+        <input type="number" id="micro_uzi" value="0" min="0">
       </div>
 
-      <div class="card">
-        <h2><i class="fa-solid fa-screwdriver-wrench"></i> Total de materiais</h2>
-        <table>
-          <thead>
-            <tr><th>Material</th><th>Total</th></tr>
-          </thead>
-          <tbody id="totalsBody"></tbody>
-        </table>
+      <div>
+        <label>TEC-9 (quantidade de crafts)</label>
+        <input type="number" id="tec9" value="0" min="0">
+      </div>
+
+      <div>
+        <label>PDW (quantidade de crafts)</label>
+        <input type="number" id="pdw" value="0" min="0">
+      </div>
+
+      <div>
+        <label>Mini AK (quantidade de crafts)</label>
+        <input type="number" id="mini_ak" value="0" min="0">
       </div>
     </div>
+
+    <div class="btns">
+      <button id="resetBtn" type="button">RESET</button>
+    </div>
+
+    <hr>
+
+    <div class="result">
+      <div class="row">
+        <div class="left">🧩 <span>Total de crafts</span></div>
+        <div class="value" id="total_crafts">0</div>
+      </div>
+
+      <div class="row">
+        <div class="left">📘 <span>Blueprint Leve</span></div>
+        <div class="value" id="bp_leve">0</div>
+      </div>
+
+      <div class="row">
+        <div class="left">📘 <span>Blueprint Média</span></div>
+        <div class="value" id="bp_media">0</div>
+      </div>
+
+      <div class="row">
+        <div class="left">🔩 <span>Corpo de SMG</span></div>
+        <div class="value" id="corpo_smg">0</div>
+      </div>
+
+      <div class="row">
+        <div class="left">🔧 <span>Corpo de pistola</span></div>
+        <div class="value" id="corpo_pistola">0</div>
+      </div>
+
+      <div class="row">
+        <div class="left">🧰 <span>Kit de ferramentas</span></div>
+        <div class="value" id="kit_ferramentas">0</div>
+      </div>
+
+      <div class="row">
+        <div class="left">⛽ <span>Gasolina refinada</span></div>
+        <div class="value" id="gas_ref">0</div>
+      </div>
+
+      <div class="row">
+        <div class="left">🧱 <span>Aço</span></div>
+        <div class="value" id="aco">0</div>
+      </div>
+
+      <div class="row">
+        <div class="left">🪟 <span>Vidro</span></div>
+        <div class="value" id="vidro">0</div>
+      </div>
+
+      <div class="row">
+        <div class="left">🔩 <span>Ferro</span></div>
+        <div class="value" id="ferro">0</div>
+      </div>
+
+      <div class="row">
+        <div class="left">🛞 <span>Borracha</span></div>
+        <div class="value" id="borracha">0</div>
+      </div>
+
+      <div class="row">
+        <div class="left">🟠 <span>Cobre</span></div>
+        <div class="value" id="cobre">0</div>
+      </div>
+
+      <div class="row">
+        <div class="left">⚪ <span>Alumínio</span></div>
+        <div class="value" id="aluminio">0</div>
+      </div>
+    </div>
+
+    <div class="logo">BELLA CRUZ</div>
   </div>
 
   <script>
-    // ===== RECEITAS (baseadas nas tuas imagens) =====
-    const recipes = {
-      "PDW": {
-        "Blueprint Media": 1,
-        "Corpo de Smg": 1,
+    // Receitas (custos por craft) conforme as imagens
+    const receitas = {
+      micro_uzi: {
+        "Blueprint Média": 1,
+        "Corpo de SMG": 1,
         "Kit de ferramentas": 2,
         "Gasolina refinada": 10,
         "Aço": 50,
         "Vidro": 50,
         "Ferro": 50,
-        "Borracha": 50,
+        "Borracha": 50
       },
-      "Mini AK": {
-        "Blueprint Media": 1,
-        "Corpo de Smg": 1,
-        "Kit de ferramentas": 2,
-        "Gasolina refinada": 10,
-        "Aço": 50,
-        "Vidro": 50,
-        "Ferro": 50,
-        "Borracha": 50,
-      },
-      "Micro UZI": {
-        "Blueprint Media": 1,
-        "Corpo de Smg": 1,
-        "Kit de ferramentas": 2,
-        "Gasolina refinada": 10,
-        "Aço": 50,
-        "Vidro": 50,
-        "Ferro": 50,
-        "Borracha": 50,
-      },
-      "TEC-9": {
+      tec9: {
         "Corpo de pistola": 1,
         "Blueprint Leve": 1,
         "Gasolina refinada": 5,
         "Cobre": 40,
         "Vidro": 40,
         "Alumínio": 40,
-        "Borracha": 40,
+        "Borracha": 40
+      },
+      pdw: {
+        "Blueprint Média": 1,
+        "Corpo de SMG": 1,
+        "Kit de ferramentas": 2,
+        "Gasolina refinada": 10,
+        "Aço": 50,
+        "Vidro": 50,
+        "Ferro": 50,
+        "Borracha": 50
+      },
+      mini_ak: {
+        "Blueprint Média": 1,
+        "Corpo de SMG": 1,
+        "Kit de ferramentas": 2,
+        "Gasolina refinada": 10,
+        "Aço": 50,
+        "Vidro": 50,
+        "Ferro": 50,
+        "Borracha": 50
       }
     };
 
-    // ===== UI =====
-    const weaponSelect = document.getElementById("weaponSelect");
-    const weaponQty = document.getElementById("weaponQty");
-    const btnAdd = document.getElementById("btnAdd");
-    const btnClear = document.getElementById("btnClear");
-    const cartBody = document.getElementById("cartBody");
-    const totalsBody = document.getElementById("totalsBody");
-    const countPill = document.getElementById("countPill").querySelector("span");
+    const campos = ["micro_uzi", "tec9", "pdw", "mini_ak"];
 
-    // Carrinho: { "PDW": 2, "TEC-9": 1, ... }
-    const cart = {};
+    const mapIds = {
+      "Blueprint Leve": "bp_leve",
+      "Blueprint Média": "bp_media",
+      "Corpo de SMG": "corpo_smg",
+      "Corpo de pistola": "corpo_pistola",
+      "Kit de ferramentas": "kit_ferramentas",
+      "Gasolina refinada": "gas_ref",
+      "Aço": "aco",
+      "Vidro": "vidro",
+      "Ferro": "ferro",
+      "Borracha": "borracha",
+      "Cobre": "cobre",
+      "Alumínio": "aluminio"
+    };
 
-    function clampNonNegInt(n){
-      n = Number(n);
-      if (!Number.isFinite(n)) return 0;
-      n = Math.floor(n);
-      return Math.max(0, n);
-    }
+    function somarTotais() {
+      const q = {};
+      let totalCrafts = 0;
 
-    function fillSelect(){
-      const keys = Object.keys(recipes);
-      weaponSelect.innerHTML = keys.map(k => `<option value="${k}">${k}</option>`).join("");
-    }
+      // inicializar totais a zero
+      Object.keys(mapIds).forEach(k => q[k] = 0);
 
-    function computeTotals(){
-      const totals = {};
-      for (const [weapon, qty] of Object.entries(cart)) {
-        const recipe = recipes[weapon];
-        for (const [mat, amount] of Object.entries(recipe)) {
-          totals[mat] = (totals[mat] || 0) + amount * qty;
-        }
-      }
-      return totals;
-    }
+      // somar por receita
+      for (const craft of campos) {
+        const n = Number(document.getElementById(craft).value) || 0;
+        totalCrafts += n;
 
-    function renderCart(){
-      const entries = Object.entries(cart).filter(([,q]) => q > 0);
-      cartBody.innerHTML = "";
-
-      if (entries.length === 0) {
-        cartBody.innerHTML = `<tr><td colspan="2" class="muted">Carrinho vazio.</td></tr>`;
-      } else {
-        for (const [weapon, qty] of entries.sort((a,b)=>a[0].localeCompare(b[0]))) {
-          const tr = document.createElement("tr");
-          tr.innerHTML = `<td>${weapon}</td><td>${qty}</td>`;
-          cartBody.appendChild(tr);
+        const rec = receitas[craft];
+        for (const item in rec) {
+          q[item] = (q[item] || 0) + rec[item] * n;
         }
       }
 
-      const totalWeapons = entries.reduce((acc,[,q]) => acc + q, 0);
-      countPill.textContent = `${totalWeapons} itens`;
-    }
+      document.getElementById("total_crafts").innerText = totalCrafts.toLocaleString();
 
-    function renderTotals(){
-      const totals = computeTotals();
-      const mats = Object.keys(totals).sort((a,b)=>a.localeCompare(b));
-      totalsBody.innerHTML = "";
-
-      if (mats.length === 0) {
-        totalsBody.innerHTML = `<tr><td colspan="2" class="muted">Sem materiais.</td></tr>`;
-        return;
-      }
-
-      for (const mat of mats) {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `<td>${mat}</td><td>${totals[mat]}</td>`;
-        totalsBody.appendChild(tr);
+      // escrever resultados
+      for (const item in mapIds) {
+        document.getElementById(mapIds[item]).innerText = (q[item] || 0).toLocaleString();
       }
     }
 
-    function rerender(){
-      renderCart();
-      renderTotals();
-    }
-
-    // ===== EVENTS =====
-    btnAdd.addEventListener("click", () => {
-      const weapon = weaponSelect.value;
-      const qty = clampNonNegInt(weaponQty.value);
-
-      if (!weapon || qty <= 0) return;
-
-      cart[weapon] = (cart[weapon] || 0) + qty;
-
-      // pequena animação ao adicionar
-      document.querySelectorAll(".card")[0].animate(
-        [{ transform: "translateY(0)" }, { transform: "translateY(-2px)" }, { transform: "translateY(0)" }],
-        { duration: 180, easing: "ease-out" }
-      );
-
-      rerender();
+    // listeners
+    document.querySelectorAll("input").forEach(inp => {
+      inp.addEventListener("input", somarTotais);
+      inp.addEventListener("change", somarTotais);
     });
 
-    btnClear.addEventListener("click", () => {
-      for (const k of Object.keys(cart)) delete cart[k];
-      rerender();
+    // reset
+    document.getElementById("resetBtn").addEventListener("click", () => {
+      campos.forEach(id => document.getElementById(id).value = 0);
+      somarTotais();
     });
 
-    // Enter no input adiciona
-    weaponQty.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") btnAdd.click();
-    });
-
-    // init
-    fillSelect();
-    rerender();
+    somarTotais();
   </script>
 </body>
 </html>
