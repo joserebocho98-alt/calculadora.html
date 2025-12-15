@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Calculadora de Materiais</title>
+  <style>
+    body { font-family: system-ui, Arial, sans-serif; margin: 20px; max-width: 920px; }
+    h1 { margin: 0 0 12px; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .card { border: 1px solid #ddd; border-radius: 12px; padding: 14px; }
+    label { display: flex; justify-content: space-between; gap: 12px; align-items: center; margin: 8px 0; }
+    input[type="number"] { width: 120px; padding: 8px; border-radius: 10px; border: 1px solid #ccc; }
+    button { padding: 10px 12px; border-radius: 10px; border: 1px solid #ccc; cursor: pointer; }
+    table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+    th, td { text-align: left; padding: 8px; border-bottom: 1px solid #eee; }
+    .muted { color: #666; font-size: 14px; }
+    .actions { display: flex; gap: 10px; margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <h1>Calculadora de materiais (receitas da imagem)</h1>
+  <div class="muted">Introduz quantidades e a tabela soma tudo automaticamente.</div>
+
+  <div class="grid" style="margin-top:14px;">
+    <div class="card">
+      <h2>Quantidades</h2>
+
+      <label>PDW <input id="q_pdw" type="number" min="0" value="0" /></label>
+      <label>Mini AK <input id="q_miniak" type="number" min="0" value="0" /></label>
+      <label>Micro UZI <input id="q_microuzi" type="number" min="0" value="0" /></label>
+      <label>TEC-9 <input id="q_tec9" type="number" min="0" value="0" /></label>
+
+      <div class="actions">
+        <button id="btnReset" type="button">Reset</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Total de materiais</h2>
+      <table>
+        <thead>
+          <tr><th>Material</th><th>Total</th></tr>
+        </thead>
+        <tbody id="totalsBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    // Receitas (baseadas na imagem)
+    const recipes = {
+      PDW: {
+        "Blueprint Media": 1,
+        "Corpo de Smg": 1,
+        "Kit de ferramentas": 2,
+        "Gasolina refinada": 10,
+        "Aço": 50,
+        "Vidro": 50,
+        "Ferro": 50,
+        "Borracha": 50,
+      },
+      "Mini AK": {
+        "Blueprint Media": 1,
+        "Corpo de Smg": 1,
+        "Kit de ferramentas": 2,
+        "Gasolina refinada": 10,
+        "Aço": 50,
+        "Vidro": 50,
+        "Ferro": 50,
+        "Borracha": 50,
+      },
+      "Micro UZI": {
+        "Blueprint Media": 1,
+        "Corpo de Smg": 1,
+        "Kit de ferramentas": 2,
+        "Gasolina refinada": 10,
+        "Aço": 50,
+        "Vidro": 50,
+        "Ferro": 50,
+        "Borracha": 50,
+      },
+      "TEC-9": {
+        "Corpo de pistola": 1,
+        "Blueprint Leve": 1,
+        "Gasolina refinada": 5,
+        "Cobre": 40,
+        "Vidro": 40,
+        "Alumínio": 40,
+        "Borracha": 40,
+      }
+    };
+
+    const inputs = {
+      PDW: document.getElementById("q_pdw"),
+      "Mini AK": document.getElementById("q_miniak"),
+      "Micro UZI": document.getElementById("q_microuzi"),
+      "TEC-9": document.getElementById("q_tec9"),
+    };
+
+    const totalsBody = document.getElementById("totalsBody");
+
+    function computeTotals() {
+      const totals = {};
+
+      for (const [item, inp] of Object.entries(inputs)) {
+        const qty = Number(inp.value || 0);
+        const recipe = recipes[item];
+
+        for (const [mat, amount] of Object.entries(recipe)) {
+          totals[mat] = (totals[mat] || 0) + amount * qty;
+        }
+      }
+
+      return totals;
+    }
+
+    function renderTotals() {
+      const totals = computeTotals();
+
+      // ordenar alfabeticamente (opcional)
+      const mats = Object.keys(totals).sort((a,b) => a.localeCompare(b));
+
+      totalsBody.innerHTML = "";
+
+      if (mats.length === 0) {
+        totalsBody.innerHTML = `<tr><td colspan="2" class="muted">Sem materiais.</td></tr>`;
+        return;
+      }
+
+      for (const mat of mats) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td>${mat}</td><td>${totals[mat]}</td>`;
+        totalsBody.appendChild(tr);
+      }
+    }
+
+    // Atualizar quando muda algum input
+    for (const inp of Object.values(inputs)) {
+      inp.addEventListener("input", renderTotals);
+    }
+
+    document.getElementById("btnReset").addEventListener("click", () => {
+      for (const inp of Object.values(inputs)) inp.value = 0;
+      renderTotals();
+    });
+
+    renderTotals();
+  </script>
+</body>
+</html>
