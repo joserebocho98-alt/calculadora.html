@@ -3,93 +3,261 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Calculadora com Imagem</title>
+  <title>Armas leves</title>
+
+  <!-- Ícones (Font Awesome) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
   <style>
-    body { font-family: system-ui, Arial, sans-serif; margin: 20px; max-width: 1100px; }
-    h1 { margin: 0 0 12px; }
-    .muted { color:#666; font-size:14px; }
-    .grid { display:grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 14px; }
-    .card { border: 1px solid #ddd; border-radius: 14px; padding: 14px; }
-    label { display:flex; justify-content:space-between; gap: 12px; align-items:center; margin: 8px 0; }
-    input[type="number"], input[type="text"] {
-      width: 180px; padding: 8px; border-radius: 10px; border: 1px solid #ccc;
+    :root{
+      --card-bg: rgba(10, 14, 22, 0.45);
+      --card-border: rgba(255,255,255,0.14);
+      --text: rgba(255,255,255,0.92);
+      --muted: rgba(255,255,255,0.72);
+      --shadow: 0 18px 40px rgba(0,0,0,0.35);
+      --radius: 18px;
+      --accent: rgba(255,255,255,0.18);
+      --accent2: rgba(255,255,255,0.10);
     }
-    input[type="file"]{ width: 260px; }
-    button { padding: 10px 12px; border-radius: 10px; border: 1px solid #ccc; cursor: pointer; }
-    table { width: 100%; border-collapse: collapse; margin-top: 8px; }
-    th, td { text-align: left; padding: 8px; border-bottom: 1px solid #eee; }
-    .actions { display:flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
-    .imgWrap { display:flex; flex-direction:column; gap: 10px; }
-    .preview {
-      width: 100%;
-      max-height: 420px;
-      object-fit: contain;
+
+    *{ box-sizing: border-box; }
+    body{
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color: var(--text);
+      min-height: 100vh;
+
+      /* fundo (mete fundo.jpg na mesma pasta) */
+      background-image: url("fundo.jpg");
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+    }
+    body::before{
+      content:"";
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(1200px 600px at 20% 10%, rgba(0,0,0,.12), rgba(0,0,0,.70));
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .wrap{
+      position: relative;
+      z-index: 1;
+      max-width: 1150px;
+      margin: 26px auto;
+      padding: 0 16px 26px;
+    }
+
+    header{
+      display:flex;
+      align-items:flex-end;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 14px;
+    }
+    h1{ margin:0; font-size: 34px; letter-spacing: .3px; display:flex; gap:10px; align-items:center; }
+    .muted{ color: var(--muted); font-size: 14px; margin-top: 6px; }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 14px;
+    }
+
+    .card{
+      border-radius: var(--radius);
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      box-shadow: var(--shadow);
+      padding: 16px;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      animation: pop .25s ease both;
+    }
+    @keyframes pop { from { transform: translateY(6px); opacity: .0; } to { transform: translateY(0); opacity: 1; } }
+
+    .card h2{
+      margin: 0 0 10px;
+      font-size: 18px;
+      color: rgba(255,255,255,0.95);
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+
+    .row{
+      display:flex;
+      gap: 12px;
+      align-items:center;
+      flex-wrap: wrap;
+    }
+
+    label{
+      display:flex;
+      justify-content: space-between;
+      align-items:center;
+      gap: 12px;
+      margin: 10px 0;
+    }
+
+    input[type="number"], select{
+      width: 200px;
+      padding: 10px 12px;
       border-radius: 12px;
-      border: 1px solid #eee;
-      background: #fafafa;
+      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(0,0,0,0.22);
+      color: var(--text);
+      outline: none;
     }
-    .two { display:grid; grid-template-columns: 1fr; gap: 10px; }
+    input[type="number"]:focus, select:focus{
+      border-color: rgba(255,255,255,0.35);
+    }
+
+    .actions{
+      display:flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    button{
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(255,255,255,0.08);
+      color: var(--text);
+      cursor: pointer;
+      transition: transform .08s ease, background .15s ease;
+      display:flex;
+      align-items:center;
+      gap: 10px;
+    }
+    button:hover{ background: rgba(255,255,255,0.14); }
+    button:active{ transform: scale(0.98); }
+
+    table{
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      overflow: hidden;
+      border-radius: 14px;
+    }
+    th, td{
+      text-align: left;
+      padding: 10px 10px;
+      border-bottom: 1px solid rgba(255,255,255,0.10);
+      font-size: 14px;
+    }
+    th{
+      color: rgba(255,255,255,0.85);
+      font-weight: 600;
+      background: rgba(255,255,255,0.06);
+    }
+
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--accent);
+      background: rgba(255,255,255,0.06);
+      color: rgba(255,255,255,0.9);
+      font-size: 13px;
+    }
+
+    .hint{
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid var(--accent2);
+      background: rgba(0,0,0,0.18);
+      color: rgba(255,255,255,0.75);
+      font-size: 13px;
+      display:flex;
+      align-items:flex-start;
+      gap:10px;
+    }
+
+    @media (max-width: 900px){
+      .grid{ grid-template-columns: 1fr; }
+      h1{ font-size: 28px; }
+      input[type="number"], select{ width: 100%; }
+    }
   </style>
 </head>
+
 <body>
-  <h1>Calculadora de materiais + imagem personalizada</h1>
-  <div class="muted">Podes escolher uma imagem (upload) ou colar um URL. A calculadora não depende da imagem.</div>
+  <div class="wrap">
+    <header>
+      <div>
+        <h1><i class="fa-solid fa-gun"></i> Armas leves</h1>
+        <div class="muted">Escolhe uma arma no menu, mete a quantidade e soma os materiais automaticamente.</div>
+      </div>
 
-  <div class="grid">
-    <!-- ESQUERDA -->
-    <div class="card">
-      <h2>Imagem</h2>
+      <div class="pill" id="countPill">
+        <i class="fa-solid fa-calculator"></i>
+        <span>0 itens</span>
+      </div>
+    </header>
 
-      <div class="two">
-        <label>
-          URL da imagem
-          <input id="imgUrl" type="text" placeholder="https://..." />
-        </label>
+    <div class="grid">
+      <div class="card">
+        <h2><i class="fa-solid fa-list-check"></i> Seleção</h2>
 
-        <label>
-          Upload (do PC/telemóvel)
-          <input id="imgFile" type="file" accept="image/*" />
-        </label>
+        <div class="row">
+          <label style="flex:1; margin:0;">
+            Arma
+            <select id="weaponSelect"></select>
+          </label>
+
+          <label style="flex:1; margin:0;">
+            Quantidade
+            <input id="weaponQty" type="number" min="0" value="1" />
+          </label>
+        </div>
 
         <div class="actions">
-          <button id="btnSetUrl" type="button">Carregar URL</button>
-          <button id="btnClearImg" type="button">Remover imagem</button>
+          <button id="btnAdd" type="button"><i class="fa-solid fa-plus"></i> Adicionar</button>
+          <button id="btnClear" type="button"><i class="fa-solid fa-broom"></i> Limpar tudo</button>
         </div>
 
-        <div class="imgWrap">
-          <img id="preview" class="preview" alt="Pré-visualização" />
-          <div class="muted" id="imgHint">Sem imagem selecionada.</div>
+        <div class="hint">
+          <i class="fa-solid fa-circle-info" style="margin-top:2px;"></i>
+          <div>
+            <div><b>Dica:</b> podes adicionar várias armas diferentes e ele soma tudo.</div>
+            <div>Se quiseres, eu meto também “remover 1 item” por arma.</div>
+          </div>
         </div>
-      </div>
-    </div>
 
-    <!-- DIREITA -->
-    <div class="card">
-      <h2>Quantidades</h2>
-
-      <label>PDW <input id="q_pdw" type="number" min="0" value="0" /></label>
-      <label>Mini AK <input id="q_miniak" type="number" min="0" value="0" /></label>
-      <label>Micro UZI <input id="q_microuzi" type="number" min="0" value="0" /></label>
-      <label>TEC-9 <input id="q_tec9" type="number" min="0" value="0" /></label>
-
-      <div class="actions">
-        <button id="btnReset" type="button">Reset</button>
+        <h2 style="margin-top:14px;"><i class="fa-solid fa-box-open"></i> Carrinho</h2>
+        <table>
+          <thead>
+            <tr><th>Arma</th><th>Qtd</th></tr>
+          </thead>
+          <tbody id="cartBody"></tbody>
+        </table>
       </div>
 
-      <h2 style="margin-top:16px;">Total de materiais</h2>
-      <table>
-        <thead>
-          <tr><th>Material</th><th>Total</th></tr>
-        </thead>
-        <tbody id="totalsBody"></tbody>
-      </table>
+      <div class="card">
+        <h2><i class="fa-solid fa-screwdriver-wrench"></i> Total de materiais</h2>
+        <table>
+          <thead>
+            <tr><th>Material</th><th>Total</th></tr>
+          </thead>
+          <tbody id="totalsBody"></tbody>
+        </table>
+      </div>
     </div>
   </div>
 
   <script>
-    // ===== RECEITAS (BASEADAS NA IMAGEM) =====
+    // ===== RECEITAS (baseadas nas tuas imagens) =====
     const recipes = {
-      PDW: {
+      "PDW": {
         "Blueprint Media": 1,
         "Corpo de Smg": 1,
         "Kit de ferramentas": 2,
@@ -130,21 +298,34 @@
       }
     };
 
-    // ===== INPUTS =====
-    const inputs = {
-      PDW: document.getElementById("q_pdw"),
-      "Mini AK": document.getElementById("q_miniak"),
-      "Micro UZI": document.getElementById("q_microuzi"),
-      "TEC-9": document.getElementById("q_tec9"),
-    };
-
+    // ===== UI =====
+    const weaponSelect = document.getElementById("weaponSelect");
+    const weaponQty = document.getElementById("weaponQty");
+    const btnAdd = document.getElementById("btnAdd");
+    const btnClear = document.getElementById("btnClear");
+    const cartBody = document.getElementById("cartBody");
     const totalsBody = document.getElementById("totalsBody");
+    const countPill = document.getElementById("countPill").querySelector("span");
 
-    function computeTotals() {
+    // Carrinho: { "PDW": 2, "TEC-9": 1, ... }
+    const cart = {};
+
+    function clampNonNegInt(n){
+      n = Number(n);
+      if (!Number.isFinite(n)) return 0;
+      n = Math.floor(n);
+      return Math.max(0, n);
+    }
+
+    function fillSelect(){
+      const keys = Object.keys(recipes);
+      weaponSelect.innerHTML = keys.map(k => `<option value="${k}">${k}</option>`).join("");
+    }
+
+    function computeTotals(){
       const totals = {};
-      for (const [item, inp] of Object.entries(inputs)) {
-        const qty = Number(inp.value || 0);
-        const recipe = recipes[item];
+      for (const [weapon, qty] of Object.entries(cart)) {
+        const recipe = recipes[weapon];
         for (const [mat, amount] of Object.entries(recipe)) {
           totals[mat] = (totals[mat] || 0) + amount * qty;
         }
@@ -152,15 +333,34 @@
       return totals;
     }
 
-    function renderTotals() {
-      const totals = computeTotals();
-      const mats = Object.keys(totals).sort((a,b) => a.localeCompare(b));
+    function renderCart(){
+      const entries = Object.entries(cart).filter(([,q]) => q > 0);
+      cartBody.innerHTML = "";
 
+      if (entries.length === 0) {
+        cartBody.innerHTML = `<tr><td colspan="2" class="muted">Carrinho vazio.</td></tr>`;
+      } else {
+        for (const [weapon, qty] of entries.sort((a,b)=>a[0].localeCompare(b[0]))) {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `<td>${weapon}</td><td>${qty}</td>`;
+          cartBody.appendChild(tr);
+        }
+      }
+
+      const totalWeapons = entries.reduce((acc,[,q]) => acc + q, 0);
+      countPill.textContent = `${totalWeapons} itens`;
+    }
+
+    function renderTotals(){
+      const totals = computeTotals();
+      const mats = Object.keys(totals).sort((a,b)=>a.localeCompare(b));
       totalsBody.innerHTML = "";
+
       if (mats.length === 0) {
         totalsBody.innerHTML = `<tr><td colspan="2" class="muted">Sem materiais.</td></tr>`;
         return;
       }
+
       for (const mat of mats) {
         const tr = document.createElement("tr");
         tr.innerHTML = `<td>${mat}</td><td>${totals[mat]}</td>`;
@@ -168,59 +368,42 @@
       }
     }
 
-    for (const inp of Object.values(inputs)) {
-      inp.addEventListener("input", renderTotals);
-    }
-
-    document.getElementById("btnReset").addEventListener("click", () => {
-      for (const inp of Object.values(inputs)) inp.value = 0;
+    function rerender(){
+      renderCart();
       renderTotals();
-    });
-
-    // ===== IMAGEM (URL OU UPLOAD) =====
-    const imgUrl = document.getElementById("imgUrl");
-    const imgFile = document.getElementById("imgFile");
-    const preview = document.getElementById("preview");
-    const imgHint = document.getElementById("imgHint");
-
-    function setPreview(src) {
-      if (!src) {
-        preview.removeAttribute("src");
-        imgHint.textContent = "Sem imagem selecionada.";
-        return;
-      }
-      preview.src = src;
-      imgHint.textContent = "Imagem carregada.";
     }
 
-    // Botão para carregar URL
-    document.getElementById("btnSetUrl").addEventListener("click", () => {
-      const url = (imgUrl.value || "").trim();
-      if (!url) return setPreview("");
-      setPreview(url);
-      imgFile.value = ""; // limpa upload se usou URL
+    // ===== EVENTS =====
+    btnAdd.addEventListener("click", () => {
+      const weapon = weaponSelect.value;
+      const qty = clampNonNegInt(weaponQty.value);
+
+      if (!weapon || qty <= 0) return;
+
+      cart[weapon] = (cart[weapon] || 0) + qty;
+
+      // pequena animação ao adicionar
+      document.querySelectorAll(".card")[0].animate(
+        [{ transform: "translateY(0)" }, { transform: "translateY(-2px)" }, { transform: "translateY(0)" }],
+        { duration: 180, easing: "ease-out" }
+      );
+
+      rerender();
     });
 
-    // Upload local
-    imgFile.addEventListener("change", () => {
-      const file = imgFile.files && imgFile.files[0];
-      if (!file) return;
-
-      const blobUrl = URL.createObjectURL(file);
-      setPreview(blobUrl);
-      imgUrl.value = ""; // limpa URL se usou upload
+    btnClear.addEventListener("click", () => {
+      for (const k of Object.keys(cart)) delete cart[k];
+      rerender();
     });
 
-    // Remover imagem
-    document.getElementById("btnClearImg").addEventListener("click", () => {
-      imgUrl.value = "";
-      imgFile.value = "";
-      setPreview("");
+    // Enter no input adiciona
+    weaponQty.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") btnAdd.click();
     });
 
-    // Inicial
-    renderTotals();
-    setPreview(""); // sem imagem
+    // init
+    fillSelect();
+    rerender();
   </script>
 </body>
 </html>
