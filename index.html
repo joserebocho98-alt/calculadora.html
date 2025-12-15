@@ -3,26 +3,67 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Calculadora de Materiais</title>
+  <title>Calculadora com Imagem</title>
   <style>
-    body { font-family: system-ui, Arial, sans-serif; margin: 20px; max-width: 920px; }
+    body { font-family: system-ui, Arial, sans-serif; margin: 20px; max-width: 1100px; }
     h1 { margin: 0 0 12px; }
-    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    .card { border: 1px solid #ddd; border-radius: 12px; padding: 14px; }
-    label { display: flex; justify-content: space-between; gap: 12px; align-items: center; margin: 8px 0; }
-    input[type="number"] { width: 120px; padding: 8px; border-radius: 10px; border: 1px solid #ccc; }
+    .muted { color:#666; font-size:14px; }
+    .grid { display:grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 14px; }
+    .card { border: 1px solid #ddd; border-radius: 14px; padding: 14px; }
+    label { display:flex; justify-content:space-between; gap: 12px; align-items:center; margin: 8px 0; }
+    input[type="number"], input[type="text"] {
+      width: 180px; padding: 8px; border-radius: 10px; border: 1px solid #ccc;
+    }
+    input[type="file"]{ width: 260px; }
     button { padding: 10px 12px; border-radius: 10px; border: 1px solid #ccc; cursor: pointer; }
     table { width: 100%; border-collapse: collapse; margin-top: 8px; }
     th, td { text-align: left; padding: 8px; border-bottom: 1px solid #eee; }
-    .muted { color: #666; font-size: 14px; }
-    .actions { display: flex; gap: 10px; margin-top: 10px; }
+    .actions { display:flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
+    .imgWrap { display:flex; flex-direction:column; gap: 10px; }
+    .preview {
+      width: 100%;
+      max-height: 420px;
+      object-fit: contain;
+      border-radius: 12px;
+      border: 1px solid #eee;
+      background: #fafafa;
+    }
+    .two { display:grid; grid-template-columns: 1fr; gap: 10px; }
   </style>
 </head>
 <body>
-  <h1>Calculadora de materiais </h1>
-  <div class="muted">Introduz quantidades e a tabela soma tudo automaticamente.</div>
+  <h1>Calculadora de materiais + imagem personalizada</h1>
+  <div class="muted">Podes escolher uma imagem (upload) ou colar um URL. A calculadora não depende da imagem.</div>
 
-  <div class="grid" style="margin-top:14px;">
+  <div class="grid">
+    <!-- ESQUERDA -->
+    <div class="card">
+      <h2>Imagem</h2>
+
+      <div class="two">
+        <label>
+          URL da imagem
+          <input id="imgUrl" type="text" placeholder="https://..." />
+        </label>
+
+        <label>
+          Upload (do PC/telemóvel)
+          <input id="imgFile" type="file" accept="image/*" />
+        </label>
+
+        <div class="actions">
+          <button id="btnSetUrl" type="button">Carregar URL</button>
+          <button id="btnClearImg" type="button">Remover imagem</button>
+        </div>
+
+        <div class="imgWrap">
+          <img id="preview" class="preview" alt="Pré-visualização" />
+          <div class="muted" id="imgHint">Sem imagem selecionada.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DIREITA -->
     <div class="card">
       <h2>Quantidades</h2>
 
@@ -34,10 +75,8 @@
       <div class="actions">
         <button id="btnReset" type="button">Reset</button>
       </div>
-    </div>
 
-    <div class="card">
-      <h2>Total de materiais</h2>
+      <h2 style="margin-top:16px;">Total de materiais</h2>
       <table>
         <thead>
           <tr><th>Material</th><th>Total</th></tr>
@@ -48,7 +87,7 @@
   </div>
 
   <script>
-    // Receitas (baseadas na imagem)
+    // ===== RECEITAS (BASEADAS NA IMAGEM) =====
     const recipes = {
       PDW: {
         "Blueprint Media": 1,
@@ -91,6 +130,7 @@
       }
     };
 
+    // ===== INPUTS =====
     const inputs = {
       PDW: document.getElementById("q_pdw"),
       "Mini AK": document.getElementById("q_miniak"),
@@ -102,32 +142,25 @@
 
     function computeTotals() {
       const totals = {};
-
       for (const [item, inp] of Object.entries(inputs)) {
         const qty = Number(inp.value || 0);
         const recipe = recipes[item];
-
         for (const [mat, amount] of Object.entries(recipe)) {
           totals[mat] = (totals[mat] || 0) + amount * qty;
         }
       }
-
       return totals;
     }
 
     function renderTotals() {
       const totals = computeTotals();
-
-      // ordenar alfabeticamente (opcional)
       const mats = Object.keys(totals).sort((a,b) => a.localeCompare(b));
 
       totalsBody.innerHTML = "";
-
       if (mats.length === 0) {
         totalsBody.innerHTML = `<tr><td colspan="2" class="muted">Sem materiais.</td></tr>`;
         return;
       }
-
       for (const mat of mats) {
         const tr = document.createElement("tr");
         tr.innerHTML = `<td>${mat}</td><td>${totals[mat]}</td>`;
@@ -135,7 +168,6 @@
       }
     }
 
-    // Atualizar quando muda algum input
     for (const inp of Object.values(inputs)) {
       inp.addEventListener("input", renderTotals);
     }
@@ -145,7 +177,50 @@
       renderTotals();
     });
 
+    // ===== IMAGEM (URL OU UPLOAD) =====
+    const imgUrl = document.getElementById("imgUrl");
+    const imgFile = document.getElementById("imgFile");
+    const preview = document.getElementById("preview");
+    const imgHint = document.getElementById("imgHint");
+
+    function setPreview(src) {
+      if (!src) {
+        preview.removeAttribute("src");
+        imgHint.textContent = "Sem imagem selecionada.";
+        return;
+      }
+      preview.src = src;
+      imgHint.textContent = "Imagem carregada.";
+    }
+
+    // Botão para carregar URL
+    document.getElementById("btnSetUrl").addEventListener("click", () => {
+      const url = (imgUrl.value || "").trim();
+      if (!url) return setPreview("");
+      setPreview(url);
+      imgFile.value = ""; // limpa upload se usou URL
+    });
+
+    // Upload local
+    imgFile.addEventListener("change", () => {
+      const file = imgFile.files && imgFile.files[0];
+      if (!file) return;
+
+      const blobUrl = URL.createObjectURL(file);
+      setPreview(blobUrl);
+      imgUrl.value = ""; // limpa URL se usou upload
+    });
+
+    // Remover imagem
+    document.getElementById("btnClearImg").addEventListener("click", () => {
+      imgUrl.value = "";
+      imgFile.value = "";
+      setPreview("");
+    });
+
+    // Inicial
     renderTotals();
+    setPreview(""); // sem imagem
   </script>
 </body>
 </html>
