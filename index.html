@@ -231,4 +231,59 @@
     const materialsBody = document.getElementById("materialsBody");
     const note = document.getElementById("note");
 
-    function clampNonNegIn
+    function clampNonNegInt(n){
+      n = Number(n);
+      if (!Number.isFinite(n)) return 0;
+      n = Math.floor(n);
+      return Math.max(0, n);
+    }
+
+    function fillSelect(){
+      const keys = Object.keys(recipes).sort((a,b)=>a.localeCompare(b));
+      weaponSelect.innerHTML = keys.map(k => `<option value="${k}">${k}</option>`).join("");
+    }
+
+    function renderMaterials(){
+      const weapon = weaponSelect.value;
+      const qty = clampNonNegInt(weaponQty.value);
+
+      materialsBody.innerHTML = "";
+
+      if (!weapon || qty <= 0){
+        materialsBody.innerHTML = `<tr><td colspan="2" class="muted">Define a arma e a quantidade.</td></tr>`;
+        note.textContent = "";
+        return;
+      }
+
+      const recipe = recipes[weapon];
+      const rows = Object.entries(recipe)
+        .map(([mat, amount]) => [mat, amount * qty])
+        .filter(([,total]) => total > 0) // só materiais necessários
+
+      rows.sort((a,b)=>a[0].localeCompare(b[0]));
+
+      for (const [mat, total] of rows){
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td>${mat}</td><td>${total}</td>`;
+        materialsBody.appendChild(tr);
+      }
+
+      note.textContent = `A calcular para: ${qty}x ${weapon}`;
+    }
+
+    document.getElementById("btnCalc").addEventListener("click", renderMaterials);
+    document.getElementById("btnReset").addEventListener("click", () => {
+      weaponQty.value = 1;
+      renderMaterials();
+    });
+
+    // Atualiza automaticamente quando mudas
+    weaponSelect.addEventListener("change", renderMaterials);
+    weaponQty.addEventListener("input", renderMaterials);
+
+    // init
+    fillSelect();
+    renderMaterials();
+  </script>
+</body>
+</html>
